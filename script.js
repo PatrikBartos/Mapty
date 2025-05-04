@@ -78,7 +78,6 @@ class App {
     inputType.addEventListener('change', this._toggleElevationField);
   }
 
-  // Get position //
   // Die erste Funktion ist die Funktion die ausgefuert wird wenn die Website den Zugriff auf den Standort bekommt, die zweite wenns nicht klappt
 
   // _loadMap is called by getCurrentPosition(this.loadMap) so this is treated as a regular function call, NOT as a method call.
@@ -163,6 +162,9 @@ class App {
         // !Number.isFinite(distance) ||
         // !Number.isFinite(duration) ||
         // !Number.isFinite(cadence)
+
+        // Wenn NICHT alle Eingaben gültig oder positiv sind, dann…“
+        // → Fehlermeldung anzeigen und Funktion abbrechen.
         !validInputs(distance, duration, cadence) ||
         !allPositive(distance, duration, cadence)
       )
