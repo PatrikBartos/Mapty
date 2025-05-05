@@ -94,7 +94,12 @@ class App {
 
   // constructor wird automatisch immer aufgerufen, wenn ein neues Objekt von der class erstellt wird
   // Man kann dirket im constructor die Methoden aufrufen
+  // Hier sind alle Methoden, die augefuehrt werden sollen, beim laden der Seite
   constructor() {
+    // get data from locale storage
+    this._getLocalStorage();
+
+    // Get users position
     this._getPosition();
 
     // In a EventHandler function the this keyword is allways pointed to the Dom Element, on which it is attached (here form Element)
@@ -139,6 +144,10 @@ class App {
 
     // Handling clicks on Map
     this.#map.on('click', this._showForm.bind(this));
+
+    this.#workouts.forEach(work => {
+      this._renderWorkoutMarker(work);
+    });
   }
 
   // Show Form //
@@ -228,9 +237,11 @@ class App {
       workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
+    // Here we do event delegration
+
     // Add new object to workout array
     this.#workouts.push(workout);
-    console.log(workout);
+    // console.log(workout);
 
     // Render workout on map as marker
     this._renderWorkoutMarker(workout);
@@ -240,6 +251,9 @@ class App {
 
     // Hide dorm + Clear input fields
     this._hideForm();
+
+    // Set locale storage to all workouts
+    this._setLocaleStorage();
   }
 
   _renderWorkoutMarker(workout) {
@@ -331,7 +345,35 @@ class App {
     });
 
     // using the public interface
-    workout.click();
+    // workout.click();
+  }
+
+  // localeStorage is just for small data
+  _setLocaleStorage() {
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts)); // stringify to convert any Object in JS to a String
+    // "workouts" is the key
+    // We need a key because we can add more keys
+  }
+
+  // wil be executed right at the beginning
+  _getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem('workouts')); // parse to convert the String back to an object
+    // console.log(data);
+
+    if (!data) return;
+
+    // In the beginning the #workouts data allways gonna be empty but if we already have some data in the locale Storage, then we will set the workouts array to the data, we had before
+    this.#workouts = data;
+
+    this.#workouts.forEach(work => {
+      this._renderWorkout(work);
+    });
+  }
+
+  reset() {
+    localStorage.removeItem('workouts');
+    // reload Page
+    location.reload();
   }
 }
 
